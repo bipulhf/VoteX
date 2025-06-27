@@ -1,0 +1,25 @@
+meta {
+  name: Create Election
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:5000/api/elections
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWJ1eTdhajMwMDAwdnl6cmtwOHQwdWNnIiwiZW1haWwiOiJiaXB1bGhmMUBnbWFpbC5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NDk4MjgwNzMsImV4cCI6MTc1MDQzMjg3M30.C-p6copFw93u_SxeQ6e4w2cGS8QfGYK7Njv54r0Y3RU
+}
+
+body:json {
+  {
+    "title" : "2026 Election",
+    "description" : "New 2026 Election",
+    "electionTypeId" : "cmbuymacs0000gf74ukrydfyc",
+    "startDate": "2025-06-14T15:41:54.231Z",
+    "endDate" : "2025-06-15T15:41:54.231Z"
+  }
+}

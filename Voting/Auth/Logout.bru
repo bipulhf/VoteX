@@ -1,0 +1,22 @@
+meta {
+  name: Logout
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:5000/api/auth/logout
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWJ1eTdhajMwMDAwdnl6cmtwOHQwdWNnIiwiZW1haWwiOiJiaXB1bGhmMUBnbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc0OTgyNzc5NiwiZXhwIjoxNzUwNDMyNTk2fQ.eFumqBqsrgd-iiD0DkD48B2U9rNnBpoPE-Wc4yxDBt8
+}
+
+body:json {
+  {
+    "currentPassword": "Bipul.123",
+    "newPassword": "Bipul.123"
+  }
+}

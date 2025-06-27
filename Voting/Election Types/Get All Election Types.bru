@@ -1,0 +1,22 @@
+meta {
+  name: Get All Election Types
+  type: http
+  seq: 9
+}
+
+get {
+  url: http://localhost:5000/api/election-types
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWJ1eTdhajMwMDAwdnl6cmtwOHQwdWNnIiwiZW1haWwiOiJiaXB1bGhmMUBnbWFpbC5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NDk4MjgwNzMsImV4cCI6MTc1MDQzMjg3M30.C-p6copFw93u_SxeQ6e4w2cGS8QfGYK7Njv54r0Y3RU
+}
+
+body:json {
+  {
+    "currentPassword": "Bipul.123",
+    "newPassword": "Bipul.123"
+  }
+}

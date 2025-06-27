@@ -1,0 +1,24 @@
+meta {
+  name: Get Ad
+  type: http
+  seq: 5
+}
+
+get {
+  url: https://services.sandbox.mobile.de/seller-api/sellers/1105/ads/1150480
+  body: none
+  auth: basic
+}
+
+headers {
+  Accept: application/vnd.de.mobile.api+json
+}
+
+auth:basic {
+  username: API5
+  password: API5pass1
+}
+
+body:json {
+  {"vehicleClass":"Car","damageUnrepaired":false,"modelRange":"1KP","trimLine":"BlueMotion","price":{"type":"FIXED","currency":"EUR","vatRate":19,"dealerPriceNet":1000,"consumerPriceNet":2000},"category":"SmallCar","make":"VW","model":"Golf","modelDescription":"Golf","firstRegistration":"201206","mileage":5000,"images":[{"ref":"https://img.classistatic.de/api/v1/mo-nonprod/images/8b/8bf15741-82a9-4eb0-90be-9ba221acc4b7?rule=mo-640.jpg","hash":"48f9c6d95c9f86d66a05d5a716a974be"},{"ref":"https://img.classistatic.de/api/v1/mo-nonprod/images/94/94017682-afba-4d39-8a73-411ac100ca76?rule=mo-640.jpg","hash":"e176f224e744c2c0418215a8e75c1101"},{"ref":"https://img.classistatic.de/api/v1/mo-nonprod/images/0e/0e0e52ab-dd0b-4465-b057-dd65f17ef0f6?rule=mo-640.jpg","hash":"549ea96aa2adfee899cde43636ead8b7"},{"ref":"https://img.classistatic.de/api/v1/mo-nonprod/images/1f/1f7a72cc-5696-4862-bdd1-80cbdaf79b9a?rule=mo-640.jpg","hash":"cb3fc64b5a176b51125a5cfe7ed67281"},{"ref":"https://img.classistatic.de/api/v1/mo-nonprod/images/ba/bae3b659-02b0-48c4-a0b1-670094dae90a?rule=mo-640.jpg","hash":"7065b3fd85d88863c54a47a142aaa2b6"},{"ref":"https://img.classistatic.de/api/v1/mo-nonprod/images/05/0509094e-ff14-48b7-8f51-401068ac31cd?rule=mo-640.jpg","hash":"bdd80d186bf552753c5061bb5b87887c"},{"ref":"https://img.classistatic.de/api/v1/mo-nonprod/images/ad/ad6210f2-b38b-49de-831e-a4201dd429e8?rule=mo-640.jpg","hash":"f532421f0a230d1dcf6ccdfbd526e0a9"},{"ref":"https://img.classistatic.de/api/v1/mo-nonprod/images/59/5946d304-40ea-496d-801e-7be92d3605af?rule=mo-640.jpg","hash":"d40346e88263be2d9b3f6c304d4682b2"},{"ref":"https://img.classistatic.de/api/v1/mo-nonprod/images/33/336f638f-bc18-4996-841f-0a60256e2f12?rule=mo-640.jpg","hash":"d0b12f3825de0a7f6dfbf498114074f8"},{"ref":"https://img.classistatic.de/api/v1/mo-nonprod/images/90/905c1e29-dbf2-46bb-86f3-f3013067f82a?rule=mo-640.jpg","hash":"9781ef2bfc9a64c7f75c34e1424bd876"},{"ref":"https://img.classistatic.de/api/v1/mo-nonprod/images/a3/a3c30a14-747f-4308-aee5-c8a6543cb3dc?rule=mo-640.jpg","hash":"72a0348251e428082c9dd8886769f98f"},{"ref":"https://img.classistatic.de/api/v1/mo-nonprod/images/cd/cd63d242-062a-4d90-a7b2-6776cca4280b?rule=mo-640.jpg","hash":"19cd444d9e5e0a1b0c09d044b95fb22c"},{"ref":"https://img.classistatic.de/api/v1/mo-nonprod/images/2c/2c8fdbf5-56a9-4646-b4f6-949dc3a882bb?rule=mo-640.jpg","hash":"f09620c62763e3e9d81ddefab6471a2c"}]}
+}

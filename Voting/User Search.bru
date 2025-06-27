@@ -1,0 +1,22 @@
+meta {
+  name: User Search
+  type: http
+  seq: 9
+}
+
+get {
+  url: https://beta.c-ar.app:446/api/company/users?is_active=0&page_no=1&page_no=1&k=AutoHaus
+  body: none
+  auth: bearer
+}
+
+params:query {
+  is_active: 0
+  page_no: 1
+  page_no: 1
+  k: AutoHaus
+}
+
+auth:bearer {
+  token: 2102|0CbFqw0qBo3CGubg2vrydFPzrlZRW2KRiTBUy0Vx9263e9d3
+}

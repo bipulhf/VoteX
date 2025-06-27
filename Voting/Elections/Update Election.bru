@@ -1,0 +1,26 @@
+meta {
+  name: Update Election
+  type: http
+  seq: 5
+}
+
+put {
+  url: http://localhost:5000/api/elections/cmbuz7haj0001jvq3uq58l4m9
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWJ1eTdhajMwMDAwdnl6cmtwOHQwdWNnIiwiZW1haWwiOiJiaXB1bGhmMUBnbWFpbC5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NDk4MjgwNzMsImV4cCI6MTc1MDQzMjg3M30.C-p6copFw93u_SxeQ6e4w2cGS8QfGYK7Njv54r0Y3RU
+}
+
+body:json {
+  {
+    "title" : "2025 Election",
+    "description" : "New 2025 Election",
+    "electionTypeId" : "cmbuymacs0000gf74ukrydfyc",
+    "startDate": "2025-06-14T15:41:54.231Z",
+    "endDate" : "2025-06-15T15:41:54.231Z",
+    "status": "ACTIVE"
+  }
+}

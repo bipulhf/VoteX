@@ -1,0 +1,21 @@
+meta {
+  name: Update User Role
+  type: http
+  seq: 6
+}
+
+put {
+  url: http://localhost:5000/api/users/cmbuy7aj30000vyzrkp8t0ucg/role
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWJ1eTdhajMwMDAwdnl6cmtwOHQwdWNnIiwiZW1haWwiOiJiaXB1bGhmMUBnbWFpbC5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NDk4MjgwNzMsImV4cCI6MTc1MDQzMjg3M30.C-p6copFw93u_SxeQ6e4w2cGS8QfGYK7Njv54r0Y3RU
+}
+
+body:json {
+  {
+    "role" : "ADMIN"
+  }
+}

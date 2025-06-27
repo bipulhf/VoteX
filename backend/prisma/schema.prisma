@@ -1,0 +1,174 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+        
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+enum ElectionStatus {
+  DRAFT
+  PUBLISHED
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum VoteStatus {
+  PENDING
+  CONFIRMED
+}
+
+model User {
+  id                    String   @id @default(cuid())
+  email                 String   @unique
+  password              String
+  firstName             String
+  lastName              String
+  role                  UserRole @default(USER)
+  isEmailVerified       Boolean  @default(false)
+  emailVerificationToken String?
+  passwordResetToken    String?
+  passwordResetExpires  DateTime?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  // Relations
+  votes                 Vote[]
+  commissionerElections ElectionCommissioner[]
+  createdElections      Election[] @relation("ElectionCreator")
+  eligibleElections     EligibleVoter[]
+
+  @@map("users")
+}
+
+model ElectionType {
+  id          String @id @default(cuid())
+  name        String @unique
+  description String?
+  isActive    Boolean @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  elections Election[]
+
+  @@map("election_types")
+}
+
+model Election {
+  id            String         @id @default(cuid())
+  title         String
+  description   String?
+  status        ElectionStatus @default(DRAFT)
+  startDate     DateTime
+  endDate       DateTime
+  isResultPublic Boolean       @default(false)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  // Foreign Keys
+  electionTypeId String
+  createdById    String
+
+  // Relations
+  electionType  ElectionType @relation(fields: [electionTypeId], references: [id], onDelete: Cascade)
+  createdBy     User         @relation("ElectionCreator", fields: [createdById], references: [id])
+  candidates    Candidate[]
+  votes         Vote[]
+  commissioners ElectionCommissioner[]
+  eligibleVoters EligibleVoter[]
+
+  @@map("elections")
+}
+
+model Candidate {
+  id          String @id @default(cuid())
+  name        String
+  party       String?
+  description String?
+  imageUrl    String?
+  position    Int    @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Foreign Keys
+  electionId String
+
+  // Relations
+  election Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
+  votes    Vote[]
+
+  @@map("candidates")
+}
+
+model Vote {
+  id        String     @id @default(cuid())
+  status    VoteStatus @default(PENDING)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  // Foreign Keys
+  userId      String
+  electionId  String
+  candidateId String
+
+  // Relations
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  election  Election  @relation(fields: [electionId], references: [id], onDelete: Cascade)
+  candidate Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  // Unique constraint to prevent multiple votes from same user in same election
+  @@unique([userId, electionId])
+  @@map("votes")
+}
+
+model ElectionCommissioner {
+  id         String   @id @default(cuid())
+  hasApproved Boolean @default(false)
+  approvedAt DateTime?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Foreign Keys
+  userId     String
+  electionId String
+
+  // Relations
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  election Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
+
+  // Unique constraint to prevent duplicate commissioners
+  @@unique([userId, electionId])
+  @@map("election_commissioners")
+}
+
+model EligibleVoter {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Foreign Keys
+  userId     String
+  electionId String
+
+  // Relations
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  election Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
+
+  // Unique constraint to prevent duplicate eligible voters
+  @@unique([userId, electionId])
+  @@map("eligible_voters")
+} 

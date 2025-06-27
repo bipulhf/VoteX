@@ -1,0 +1,24 @@
+meta {
+  name: Delete Election Candidate
+  type: http
+  seq: 7
+}
+
+delete {
+  url: http://localhost:5000/api/elections/cmbuz7haj0001jvq3uq58l4m9/candidates/cmbuzf24x0003jvq3irrbhh6u
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWJ1eTdhajMwMDAwdnl6cmtwOHQwdWNnIiwiZW1haWwiOiJiaXB1bGhmMUBnbWFpbC5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NDk4MjgwNzMsImV4cCI6MTc1MDQzMjg3M30.C-p6copFw93u_SxeQ6e4w2cGS8QfGYK7Njv54r0Y3RU
+}
+
+body:json {
+  {
+    "name": "Shahiduzzaman",
+    "party": "New Party",
+    "imageUrl": "https://cdn.explorecams.com/storage/photos/LEFEikw0MR_1600.jpg",
+    "position": 1
+  }
+}

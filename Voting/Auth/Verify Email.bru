@@ -1,0 +1,17 @@
+meta {
+  name: Verify Email
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:5000/api/auth/verify-email
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NDk4Mjc3MzcsImV4cCI6MTc0OTkxNDEzN30.AMJ9SRgN6CdtaszQB75LK7if03qmx88JFePJ7znZreQ"
+  }
+}
