@@ -74,4 +74,39 @@ export interface ElectionResult {
   }>;
 }
 
+export interface CreateReportRequest {
+  title: string;
+  description: string;
+  attachmentUrls?: string[];
+  electionId: string;
+}
+
+export interface UpdateReportRequest {
+  title?: string;
+  description?: string;
+  attachmentUrls?: string[];
+}
+
+export interface ReportResponse {
+  id: string;
+  title: string;
+  description: string;
+  attachmentUrls: string[];
+  createdAt: Date;
+  updatedAt: Date;
+  reporterId: string;
+  electionId: string;
+  reporter: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+  election: {
+    id: string;
+    title: string;
+    status: string;
+  };
+}
+
 // Prisma types will be available after installation and generation

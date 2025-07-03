@@ -130,10 +130,45 @@ export const idParamSchema = z.object({
   id: z.string().min(1, "ID is required"),
 });
 
+export const electionIdParamSchema = z.object({
+  electionId: z.string().min(1, "Election ID is required"),
+});
+
 // Eligible Voter validation schemas
 export const bulkEligibleVotersSchema = z.object({
   emails: z
     .array(z.string().email("Invalid email address"))
     .min(1, "At least one email is required")
     .max(100, "Maximum 100 emails allowed"),
+});
+
+// Report validation schemas
+export const createReportSchema = z.object({
+  title: z.string().min(1, "Title is required").max(200, "Title too long"),
+  description: z
+    .string()
+    .min(1, "Description is required")
+    .max(2000, "Description too long"),
+  attachmentUrls: z
+    .array(z.string().url("Invalid attachment URL"))
+    .max(10, "Maximum 10 attachments allowed")
+    .optional(),
+  electionId: z.string().min(1, "Election ID is required"),
+});
+
+export const updateReportSchema = z.object({
+  title: z
+    .string()
+    .min(1, "Title is required")
+    .max(200, "Title too long")
+    .optional(),
+  description: z
+    .string()
+    .min(1, "Description is required")
+    .max(2000, "Description too long")
+    .optional(),
+  attachmentUrls: z
+    .array(z.string().url("Invalid attachment URL"))
+    .max(10, "Maximum 10 attachments allowed")
+    .optional(),
 });

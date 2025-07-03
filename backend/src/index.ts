@@ -15,11 +15,11 @@ import electionTypeRoutes from "./routes/electionTypes";
 import electionRoutes from "./routes/elections";
 import userRoutes from "./routes/users";
 import eligibleVoterRoutes from "./routes/eligibleVoters";
+import reportRoutes from "./routes/reports";
 
 const app = express();
 const server = createServer(app);
 
-// Initialize Socket.IO for real-time features
 const io = new Server(server, {
   cors: {
     origin: env.FRONTEND_URL,
@@ -27,7 +27,6 @@ const io = new Server(server, {
   },
 });
 
-// Trust proxy for rate limiting
 app.set("trust proxy", 1);
 
 // Rate limiting
@@ -42,7 +41,6 @@ const limiter = rateLimit({
   legacyHeaders: false,
 });
 
-// Middleware
 app.use(helmet());
 app.use(
   cors({
@@ -55,7 +53,6 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(limiter);
 
-// Health check route
 app.get("/health", (req, res) => {
   res.json({
     success: true,
@@ -65,18 +62,17 @@ app.get("/health", (req, res) => {
   });
 });
 
-// API routes
 app.use("/api/auth", authRoutes);
 app.use("/api/election-types", electionTypeRoutes);
 app.use("/api/elections", electionRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/eligible-voters", eligibleVoterRoutes);
+app.use("/api/reports", reportRoutes);
 
 // Socket.IO connection handling
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
 
-  // Join election room for real-time updates
   socket.on("join-election", (electionId: string) => {
     socket.join(`election-${electionId}`);
     console.log(
@@ -84,7 +80,6 @@ io.on("connection", (socket) => {
     );
   });
 
-  // Leave election room
   socket.on("leave-election", (electionId: string) => {
     socket.leave(`election-${electionId}`);
     console.log(`User ${socket.id} left election room: election-${electionId}`);
@@ -95,14 +90,11 @@ io.on("connection", (socket) => {
   });
 });
 
-// Store io instance globally for use in other modules
 app.set("io", io);
 
-// Error handling middleware (must be last)
 app.use(notFound);
 app.use(errorHandler);
 
-// Start server
 const PORT = env.PORT || 5000;
 
 server.listen(PORT, () => {
@@ -111,7 +103,6 @@ server.listen(PORT, () => {
   console.log(`🌐 Frontend URL: ${env.FRONTEND_URL}`);
 });
 
-// Graceful shutdown
 process.on("SIGTERM", () => {
   console.log("SIGTERM received. Shutting down gracefully...");
   server.close(() => {
