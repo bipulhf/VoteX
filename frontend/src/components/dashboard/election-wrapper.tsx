@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, FileText } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { ElectionDetails } from "@/components/dashboard/election-details";
@@ -11,6 +11,7 @@ import { Election, ElectionType, User } from "@/lib/type";
 import { deleteElection } from "@/actions/election.action";
 import { toast } from "sonner";
 import { AddVotersModal } from "./add-voters-modal";
+import { ReportsModal } from "./reports-modal";
 
 export default function ElectionsPage({
   elections,
@@ -26,6 +27,7 @@ export default function ElectionsPage({
   const [selectedElection, setSelectedElection] = useState<any>(null);
   const [editingElection, setEditingElection] = useState<any>(null);
   const [isAddVotersModalOpen, setIsAddVotersModalOpen] = useState(false);
+  const [isReportsModalOpen, setIsReportsModalOpen] = useState(false);
 
   const handleCreate = () => {
     setEditingElection(null);
@@ -86,10 +88,16 @@ export default function ElectionsPage({
             Create and manage elections with candidates and commissioners.
           </p>
         </div>
-        <Button onClick={handleCreate}>
-          <Plus className="mr-2 h-4 w-4" />
-          Create Election
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setIsReportsModalOpen(true)}>
+            <FileText className="mr-2 h-4 w-4" />
+            View Reports
+          </Button>
+          <Button onClick={handleCreate}>
+            <Plus className="mr-2 h-4 w-4" />
+            Create Election
+          </Button>
+        </div>
       </div>
 
       <ElectionsTable
@@ -124,6 +132,11 @@ export default function ElectionsPage({
         isOpen={isDetailsOpen}
         onClose={() => setIsDetailsOpen(false)}
         election={selectedElection}
+      />
+
+      <ReportsModal
+        isOpen={isReportsModalOpen}
+        onClose={() => setIsReportsModalOpen(false)}
       />
     </div>
   );

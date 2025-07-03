@@ -71,3 +71,32 @@ export type ElectionType = {
     elections: number;
   };
 };
+
+export type Report = {
+  id: string;
+  title: string;
+  description: string;
+  attachmentUrls: string[];
+  createdAt: string;
+  updatedAt: string;
+  reporterId: string;
+  electionId: string;
+  reporter: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+  election: {
+    id: string;
+    title: string;
+    status: string;
+  };
+};
+
+export type CreateReportData = {
+  title: string;
+  description: string;
+  attachmentUrls?: string[];
+  electionId: string;
+};

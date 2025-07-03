@@ -11,6 +11,7 @@ import {
   Calendar,
   AlertCircle,
   CheckCircle,
+  FileText,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -37,6 +38,7 @@ import { Separator } from "@/components/ui/separator";
 import { approveElection } from "@/actions/election.action";
 import { toast } from "sonner";
 import { ViewVotersModal } from "./view-voters-modal";
+import { ReportsModal } from "./reports-modal";
 
 type CommissionerElection = {
   id: string;
@@ -91,6 +93,7 @@ export default function ElectionCommissionWrapper({
   const [isApprovalModalOpen, setIsApprovalModalOpen] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
   const [isVotersModalOpen, setIsVotersModalOpen] = useState(false);
+  const [isReportsModalOpen, setIsReportsModalOpen] = useState(false);
 
   const now = new Date();
 
@@ -199,13 +202,19 @@ export default function ElectionCommissionWrapper({
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">
-          Commissioner Dashboard
-        </h1>
-        <p className="text-muted-foreground">
-          Manage your election commissioner duties and approvals.
-        </p>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Commissioner Dashboard
+          </h1>
+          <p className="text-muted-foreground">
+            Manage your election commissioner duties and approvals.
+          </p>
+        </div>
+        <Button variant="outline" onClick={() => setIsReportsModalOpen(true)}>
+          <FileText className="mr-2 h-4 w-4" />
+          View Reports
+        </Button>
       </div>
 
       {/* Summary Cards */}
@@ -446,6 +455,11 @@ export default function ElectionCommissionWrapper({
           electionId={selectedElection.id}
         />
       )}
+
+      <ReportsModal
+        isOpen={isReportsModalOpen}
+        onClose={() => setIsReportsModalOpen(false)}
+      />
 
       {/* Approval Modal */}
       <Dialog open={isApprovalModalOpen} onOpenChange={setIsApprovalModalOpen}>

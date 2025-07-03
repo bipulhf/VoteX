@@ -11,6 +11,7 @@ import {
   Users,
   Vote,
   AlertTriangle,
+  FileText,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -22,6 +23,7 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Election } from "@/lib/type";
+import { ReportFormModal } from "./report-form-modal";
 
 // Type definitions based on your data structure
 type ElectionResult = {
@@ -56,6 +58,7 @@ export default function SingleElectionWrapper({
   electionData: ElectionResultsData;
 }) {
   const [showDetailedResults, setShowDetailedResults] = useState(false);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
   if (!electionData) {
     return (
@@ -104,6 +107,14 @@ export default function SingleElectionWrapper({
             Election ID: {electionData.electionId}
           </p>
         </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setIsReportModalOpen(true)}
+        >
+          <FileText className="mr-2 h-4 w-4" />
+          Report Issue
+        </Button>
       </div>
 
       {/* Election Statistics */}
@@ -396,6 +407,14 @@ export default function SingleElectionWrapper({
           </Card>
         </div>
       )}
+
+      <ReportFormModal
+        isOpen={isReportModalOpen}
+        onClose={() => setIsReportModalOpen(false)}
+        electionId={electionData.electionId}
+        electionTitle={electionData.electionTitle}
+        onSuccess={() => window.location.reload()}
+      />
     </div>
   );
 }
