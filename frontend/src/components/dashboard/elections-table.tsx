@@ -13,6 +13,7 @@ import {
   Trash2,
   UserPlus,
   Users,
+  Plus,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -49,7 +50,14 @@ type ElectionsTableProps = {
   onView: (election: Election) => void;
   onAddVoters: (election: Election) => void;
   onDelete?: (election: Election) => void;
+  onCreateNextRound?: (
+    election: Election,
+    data: { numberOfCandidates: number; startDate: string; endDate: string }
+  ) => void;
 };
+
+const toISOString = (local: string) =>
+  local ? new Date(local).toISOString() : "";
 
 export function ElectionsTable({
   initialElections,
@@ -57,8 +65,9 @@ export function ElectionsTable({
   onView,
   onAddVoters,
   onDelete,
+  onCreateNextRound,
 }: ElectionsTableProps) {
-  const [elections, setElections] = useState<Election[]>(initialElections);
+  const elections = initialElections;
   const [searchQuery, setSearchQuery] = useState("");
   const [sortColumn, setSortColumn] = useState<keyof Election>("createdAt");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
@@ -66,6 +75,15 @@ export function ElectionsTable({
     null
   );
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isNextRoundModalOpen, setIsNextRoundModalOpen] = useState(false);
+  const [nextRoundElection, setNextRoundElection] = useState<Election | null>(
+    null
+  );
+  const [nextRoundForm, setNextRoundForm] = useState({
+    numberOfCandidates: 2,
+    startDate: "",
+    endDate: "",
+  });
 
   // Filter elections based on search query
   const filteredElections = elections.filter((election) => {
@@ -108,9 +126,6 @@ export function ElectionsTable({
   const handleDelete = () => {
     if (selectedElection && onDelete) {
       onDelete(selectedElection);
-      setElections(
-        elections.filter((election) => election.id !== selectedElection.id)
-      );
       setIsDeleteModalOpen(false);
       setSelectedElection(null);
     }
@@ -151,6 +166,24 @@ export function ElectionsTable({
         return "text-red-600";
       default:
         return "text-gray-600";
+    }
+  };
+
+  const openNextRoundModal = (election: Election) => {
+    setNextRoundElection(election);
+    setIsNextRoundModalOpen(true);
+  };
+
+  const handleNextRoundSubmit = () => {
+    if (onCreateNextRound && nextRoundElection) {
+      onCreateNextRound(nextRoundElection, {
+        ...nextRoundForm,
+        startDate: toISOString(nextRoundForm.startDate),
+        endDate: toISOString(nextRoundForm.endDate),
+      });
+      setIsNextRoundModalOpen(false);
+      setNextRoundElection(null);
+      setNextRoundForm({ numberOfCandidates: 2, startDate: "", endDate: "" });
     }
   };
 
@@ -355,6 +388,12 @@ export function ElectionsTable({
                           Voters List
                         </DropdownMenuItem>
                         <DropdownMenuItem
+                          onClick={() => openNextRoundModal(election)}
+                        >
+                          <Plus className="mr-2 h-4 w-4" />
+                          Another Round
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
                           onClick={() => openDeleteModal(election)}
                           className="text-destructive focus:text-destructive"
                           disabled={election._count.eligibleVoters > 0}
@@ -405,6 +444,71 @@ export function ElectionsTable({
             >
               Delete
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Next Round Modal */}
+      <Dialog
+        open={isNextRoundModalOpen}
+        onOpenChange={setIsNextRoundModalOpen}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create Another Round</DialogTitle>
+            <DialogDescription>
+              Start a new round for{" "}
+              <span className="font-medium">{nextRoundElection?.title}</span>.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Number of Candidates
+              </label>
+              <Input
+                type="number"
+                min={1}
+                value={nextRoundForm.numberOfCandidates}
+                onChange={(e) =>
+                  setNextRoundForm((f) => ({
+                    ...f,
+                    numberOfCandidates: Number(e.target.value),
+                  }))
+                }
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Start Date
+              </label>
+              <Input
+                type="datetime-local"
+                value={nextRoundForm.startDate}
+                onChange={(e) =>
+                  setNextRoundForm((f) => ({ ...f, startDate: e.target.value }))
+                }
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">End Date</label>
+              <Input
+                type="datetime-local"
+                value={nextRoundForm.endDate}
+                onChange={(e) =>
+                  setNextRoundForm((f) => ({ ...f, endDate: e.target.value }))
+                }
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsNextRoundModalOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleNextRoundSubmit}>Create Round</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

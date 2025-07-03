@@ -548,3 +548,27 @@ export async function deleteElection(electionId: string) {
     return { error: "An unknown error occurred while deleting election" };
   }
 }
+
+export async function createNextRoundElection(
+  electionId: string,
+  data: { numberOfCandidates: number; startDate: string; endDate: string }
+) {
+  try {
+    const cookieStore = await cookies();
+    const resp = await fetch(`${API_URL}/elections/${electionId}/next-round`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${cookieStore.get("token")?.value}`,
+      },
+      body: JSON.stringify(data),
+    });
+    const result = await resp.json();
+    if (!resp.ok) {
+      return { error: result.message || "Failed to create next round" };
+    }
+    return { data: result.data };
+  } catch (error: any) {
+    return { error: error.message || "Failed to create next round" };
+  }
+}

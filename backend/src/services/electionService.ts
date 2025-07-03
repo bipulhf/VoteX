@@ -747,4 +747,115 @@ export class ElectionService {
       },
     }));
   }
+
+  /**
+   * Create a new round of election based on previous election's results.
+   * @param previousElectionId string - ID of the previous election
+   * @param numberOfCandidates number - Number of top candidates to include
+   * @param startDate string - ISO date for new election start
+   * @param endDate string - ISO date for new election end
+   * @param createdById string - Admin user ID
+   * @returns The new election object
+   */
+  async createNextRoundElection({
+    previousElectionId,
+    numberOfCandidates,
+    startDate,
+    endDate,
+    createdById,
+  }: {
+    previousElectionId: string;
+    numberOfCandidates: number;
+    startDate: string;
+    endDate: string;
+    createdById: string;
+  }) {
+    // Fetch previous election with all needed relations
+    const prevElection = await prisma.election.findUnique({
+      where: { id: previousElectionId },
+      include: {
+        candidates: true,
+        votes: true,
+        eligibleVoters: true,
+        commissioners: true,
+        electionType: true,
+      },
+    });
+    if (!prevElection) throw createError("Previous election not found", 404);
+
+    // Calculate top N candidates by vote count
+    const voteCounts: Record<string, number> = {};
+    prevElection.candidates.forEach((c) => (voteCounts[c.id] = 0));
+    prevElection.votes.forEach((v) => voteCounts[v.candidateId]++);
+    const topCandidates = [...prevElection.candidates]
+      .sort((a, b) => voteCounts[b.id] - voteCounts[a.id])
+      .slice(0, numberOfCandidates);
+
+    // Determine round number from title
+    let baseTitle = prevElection.title;
+    let round = 2;
+    const roundMatch = baseTitle.match(/\(Round (\d+)\)$/);
+    if (roundMatch) {
+      baseTitle = baseTitle.replace(/ \(Round \d+\)$/, "");
+      round = parseInt(roundMatch[1], 10) + 1;
+    }
+    const newTitle = `${baseTitle} (Round ${round})`;
+
+    // Create new election
+    const newElection = await prisma.election.create({
+      data: {
+        title: newTitle,
+        description: prevElection.description,
+        electionTypeId: prevElection.electionTypeId,
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
+        createdById,
+        status: "ACTIVE",
+      },
+    });
+
+    // Duplicate top N candidates
+    for (const [i, candidate] of topCandidates.entries()) {
+      await prisma.candidate.create({
+        data: {
+          name: candidate.name,
+          party: candidate.party,
+          description: candidate.description,
+          imageUrl: candidate.imageUrl,
+          position: i + 1,
+          electionId: newElection.id,
+        },
+      });
+    }
+
+    // Duplicate eligible voters
+    for (const ev of prevElection.eligibleVoters) {
+      await prisma.eligibleVoter.create({
+        data: {
+          userId: ev.userId,
+          electionId: newElection.id,
+        },
+      });
+    }
+
+    // Duplicate commissioners
+    for (const comm of prevElection.commissioners) {
+      await prisma.electionCommissioner.create({
+        data: {
+          userId: comm.userId,
+          electionId: newElection.id,
+        },
+      });
+    }
+
+    // Return the new election with candidates, voters, and commissioners
+    return prisma.election.findUnique({
+      where: { id: newElection.id },
+      include: {
+        candidates: true,
+        eligibleVoters: true,
+        commissioners: true,
+      },
+    });
+  }
 }

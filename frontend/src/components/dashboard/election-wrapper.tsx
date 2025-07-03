@@ -8,13 +8,17 @@ import { ElectionDetails } from "@/components/dashboard/election-details";
 import { ElectionForm } from "@/components/dashboard/election-form";
 import { ElectionsTable } from "@/components/dashboard/elections-table";
 import { Election, ElectionType, User } from "@/lib/type";
-import { deleteElection } from "@/actions/election.action";
+import {
+  deleteElection,
+  createNextRoundElection,
+  getAllElectionsAdmin,
+} from "@/actions/election.action";
 import { toast } from "sonner";
 import { AddVotersModal } from "./add-voters-modal";
 import { ReportsModal } from "./reports-modal";
 
 export default function ElectionsPage({
-  elections,
+  elections: initialElections,
   electionTypes,
   users,
 }: {
@@ -28,6 +32,7 @@ export default function ElectionsPage({
   const [editingElection, setEditingElection] = useState<any>(null);
   const [isAddVotersModalOpen, setIsAddVotersModalOpen] = useState(false);
   const [isReportsModalOpen, setIsReportsModalOpen] = useState(false);
+  const [elections, setElections] = useState<Election[]>(initialElections);
 
   const handleCreate = () => {
     setEditingElection(null);
@@ -77,6 +82,34 @@ export default function ElectionsPage({
     }
   };
 
+  const handleCreateNextRound = async (
+    election: Election,
+    data: { numberOfCandidates: number; startDate: string; endDate: string }
+  ) => {
+    try {
+      toast.loading("Creating next round...");
+      const result = await createNextRoundElection(election.id, data);
+      if (result.error) {
+        toast.error("Failed to create next round", {
+          description: result.error,
+        });
+      } else {
+        toast.success("Next round created successfully", {
+          description: `New round for "${election.title}" created.`,
+        });
+        toast.dismiss();
+        // Refresh elections list
+        const updated = await getAllElectionsAdmin();
+        if (updated.data) setElections(updated.data);
+      }
+    } catch (error) {
+      toast.dismiss();
+      toast.error("Failed to create next round", {
+        description: "An unexpected error occurred.",
+      });
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -106,6 +139,7 @@ export default function ElectionsPage({
         onView={handleView}
         onDelete={handleDelete}
         onAddVoters={handleAddVoters}
+        onCreateNextRound={handleCreateNextRound}
       />
 
       <ElectionForm

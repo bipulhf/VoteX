@@ -18,6 +18,7 @@ import {
   paginationSchema,
 } from "../utils/validators";
 import { ApiResponse } from "../types";
+import { z } from "zod";
 
 const router = Router();
 const electionService = new ElectionService();
@@ -303,6 +304,40 @@ router.post(
       success: true,
       message: result.message,
       data: { published: result.published },
+    } as ApiResponse);
+    return;
+  })
+);
+
+const nextRoundSchema = z.object({
+  numberOfCandidates: z
+    .number()
+    .min(1, "Number of candidates must be at least 1"),
+  startDate: z.string().datetime("Invalid start date"),
+  endDate: z.string().datetime("Invalid end date"),
+});
+
+router.post(
+  "/:id/next-round",
+  authenticate,
+  requireAdmin,
+  validateParams(idParamSchema),
+  validateBody(nextRoundSchema),
+  asyncHandler(async (req: any, res) => {
+    const { numberOfCandidates, startDate, endDate } = req.body;
+    const previousElectionId = req.params.id;
+    const createdById = req.user.userId;
+    const result = await electionService.createNextRoundElection({
+      previousElectionId,
+      numberOfCandidates,
+      startDate,
+      endDate,
+      createdById,
+    });
+    res.status(201).json({
+      success: true,
+      message: "Next round election created successfully",
+      data: result,
     } as ApiResponse);
     return;
   })
