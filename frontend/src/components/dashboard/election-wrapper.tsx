@@ -116,6 +116,7 @@ export default function ElectionsPage({
           electionId={selectedElection.id}
           onSuccess={() => {
             setIsAddVotersModalOpen(false);
+            window.location.reload();
           }}
         />
       )}

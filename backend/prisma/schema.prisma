@@ -72,7 +72,7 @@ model Election {
   id            String         @id @default(cuid())
   title         String
   description   String?
-  status        ElectionStatus @default(DRAFT)
+  status        ElectionStatus @default(ACTIVE)
   startDate     DateTime
   endDate       DateTime
   isResultPublic Boolean       @default(false)

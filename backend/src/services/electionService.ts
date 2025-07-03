@@ -36,6 +36,7 @@ export class ElectionService {
         startDate: new Date(data.startDate),
         endDate: new Date(data.endDate),
         createdById: data.createdById,
+        status: ElectionStatus.ACTIVE,
       },
       include: {
         electionType: true,

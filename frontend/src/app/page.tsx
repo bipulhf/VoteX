@@ -1,6 +1,6 @@
-import Link from "next/link"
-import { ArrowRight, CheckCircle, ShieldCheck, Users } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import Link from "next/link";
+import { ArrowRight, CheckCircle, ShieldCheck, Users } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
   return (
@@ -9,19 +9,31 @@ export default function Home() {
         <div className="container flex h-16 items-center justify-between py-4">
           <div className="flex items-center gap-2">
             <ShieldCheck className="h-6 w-6 text-primary" />
-            <span className="text-xl font-bold">ElectVote</span>
+            <span className="text-xl font-bold">VoteX</span>
           </div>
           <nav className="hidden gap-6 md:flex">
-            <Link href="/" className="text-sm font-medium transition-colors hover:text-primary">
+            <Link
+              href="/"
+              className="text-sm font-medium transition-colors hover:text-primary"
+            >
               Home
             </Link>
-            <Link href="#features" className="text-sm font-medium transition-colors hover:text-primary">
+            <Link
+              href="#features"
+              className="text-sm font-medium transition-colors hover:text-primary"
+            >
               Features
             </Link>
-            <Link href="#how-it-works" className="text-sm font-medium transition-colors hover:text-primary">
+            <Link
+              href="#how-it-works"
+              className="text-sm font-medium transition-colors hover:text-primary"
+            >
               How It Works
             </Link>
-            <Link href="#faq" className="text-sm font-medium transition-colors hover:text-primary">
+            <Link
+              href="#faq"
+              className="text-sm font-medium transition-colors hover:text-primary"
+            >
               FAQ
             </Link>
           </nav>
@@ -45,8 +57,9 @@ export default function Home() {
                     Secure Online Elections Made Simple
                   </h1>
                   <p className="max-w-[600px] text-muted-foreground md:text-xl">
-                    Our platform provides a transparent, secure, and accessible way to conduct elections online. Vote
-                    with confidence from anywhere.
+                    Our platform provides a transparent, secure, and accessible
+                    way to conduct elections online. Vote with confidence from
+                    anywhere.
                   </p>
                 </div>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
@@ -69,20 +82,29 @@ export default function Home() {
                     <div className="w-full max-w-sm space-y-8 rounded-lg border bg-background p-8 shadow-lg">
                       <div className="space-y-2 text-center">
                         <h2 className="text-2xl font-bold">Cast Your Vote</h2>
-                        <p className="text-sm text-muted-foreground">Select your preferred candidate</p>
+                        <p className="text-sm text-muted-foreground">
+                          Select your preferred candidate
+                        </p>
                       </div>
                       <div className="space-y-4">
-                        {["Jane Smith", "John Doe", "Alex Johnson"].map((candidate, i) => (
-                          <div key={i} className="flex items-center space-x-2 rounded-lg border p-4 hover:bg-accent">
-                            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                              <Users className="h-5 w-5 text-primary" />
+                        {["Jane Smith", "John Doe", "Alex Johnson"].map(
+                          (candidate, i) => (
+                            <div
+                              key={i}
+                              className="flex items-center space-x-2 rounded-lg border p-4 hover:bg-accent"
+                            >
+                              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                                <Users className="h-5 w-5 text-primary" />
+                              </div>
+                              <div className="flex-1">
+                                <div className="font-medium">{candidate}</div>
+                                <div className="text-sm text-muted-foreground">
+                                  Candidate #{i + 1}
+                                </div>
+                              </div>
                             </div>
-                            <div className="flex-1">
-                              <div className="font-medium">{candidate}</div>
-                              <div className="text-sm text-muted-foreground">Candidate #{i + 1}</div>
-                            </div>
-                          </div>
-                        ))}
+                          )
+                        )}
                         <Button className="w-full">Submit Vote</Button>
                       </div>
                     </div>
@@ -92,16 +114,22 @@ export default function Home() {
             </div>
           </div>
         </section>
-        <section id="features" className="w-full bg-muted/40 py-12 md:py-24 lg:py-32">
+        <section
+          id="features"
+          className="w-full bg-muted/40 py-12 md:py-24 lg:py-32"
+        >
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
                 <div className="inline-block rounded-lg bg-primary px-3 py-1 text-sm text-primary-foreground">
                   Features
                 </div>
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Why Choose ElectVote?</h2>
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+                  Why Choose VoteX?
+                </h2>
                 <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed">
-                  Our platform offers everything you need to run secure, transparent elections online.
+                  Our platform offers everything you need to run secure,
+                  transparent elections online.
                 </p>
               </div>
             </div>
@@ -116,19 +144,23 @@ export default function Home() {
                 {
                   icon: <Users className="h-10 w-10 text-primary" />,
                   title: "Accessible Anywhere",
-                  description: "Vote from any device with internet access, making participation easier for everyone.",
+                  description:
+                    "Vote from any device with internet access, making participation easier for everyone.",
                 },
                 {
                   icon: <CheckCircle className="h-10 w-10 text-primary" />,
                   title: "Real-time Results",
-                  description: "Get instant, transparent results as soon as the election closes.",
+                  description:
+                    "Get instant, transparent results as soon as the election closes.",
                 },
               ].map((feature, i) => (
                 <div
                   key={i}
                   className="flex flex-col items-center space-y-4 rounded-lg border bg-background p-6 shadow-sm"
                 >
-                  <div className="rounded-full bg-primary/10 p-4">{feature.icon}</div>
+                  <div className="rounded-full bg-primary/10 p-4">
+                    {feature.icon}
+                  </div>
                   <h3 className="text-xl font-bold">{feature.title}</h3>
                   <p className="text-muted-foreground">{feature.description}</p>
                 </div>
@@ -140,9 +172,12 @@ export default function Home() {
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">How It Works</h2>
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+                  How It Works
+                </h2>
                 <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed">
-                  Our platform makes online voting simple, secure, and accessible in just a few steps.
+                  Our platform makes online voting simple, secure, and
+                  accessible in just a few steps.
                 </p>
               </div>
             </div>
@@ -151,7 +186,8 @@ export default function Home() {
                 {
                   step: "01",
                   title: "Register",
-                  description: "Create your account with your personal details.",
+                  description:
+                    "Create your account with your personal details.",
                 },
                 {
                   step: "02",
@@ -161,15 +197,20 @@ export default function Home() {
                 {
                   step: "03",
                   title: "Access Ballot",
-                  description: "Log in during the election period to access your ballot.",
+                  description:
+                    "Log in during the election period to access your ballot.",
                 },
                 {
                   step: "04",
                   title: "Cast Vote",
-                  description: "Make your selection and submit your secure vote.",
+                  description:
+                    "Make your selection and submit your secure vote.",
                 },
               ].map((step, i) => (
-                <div key={i} className="group relative flex flex-col items-center space-y-4">
+                <div
+                  key={i}
+                  className="group relative flex flex-col items-center space-y-4"
+                >
                   <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary text-2xl font-bold text-primary-foreground">
                     {step.step}
                   </div>
@@ -191,7 +232,8 @@ export default function Home() {
                   Ready to Transform Your Elections?
                 </h2>
                 <p className="max-w-[900px] text-primary-foreground/80 md:text-xl/relaxed">
-                  Join thousands of organizations already using ElectVote for secure online elections.
+                  Join thousands of organizations already using VoteX for secure
+                  online elections.
                 </p>
               </div>
               <div className="flex flex-col gap-2 min-[400px]:flex-row">
@@ -210,13 +252,16 @@ export default function Home() {
         <div className="container flex flex-col gap-6 py-8 md:flex-row md:items-center md:justify-between md:py-12">
           <div className="flex items-center gap-2">
             <ShieldCheck className="h-6 w-6 text-primary" />
-            <span className="text-xl font-bold">ElectVote</span>
+            <span className="text-xl font-bold">VoteX</span>
           </div>
           <nav className="flex gap-4 sm:gap-6">
             <Link href="/terms" className="text-sm font-medium hover:underline">
               Terms
             </Link>
-            <Link href="/privacy" className="text-sm font-medium hover:underline">
+            <Link
+              href="/privacy"
+              className="text-sm font-medium hover:underline"
+            >
               Privacy
             </Link>
             <Link href="#" className="text-sm font-medium hover:underline">
@@ -224,10 +269,10 @@ export default function Home() {
             </Link>
           </nav>
           <div className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} ElectVote. All rights reserved.
+            © {new Date().getFullYear()} VoteX. All rights reserved.
           </div>
         </div>
       </footer>
     </div>
-  )
+  );
 }

@@ -33,7 +33,7 @@ export default function ResendVerificationMail({ error }: { error: string }) {
           <div className="flex flex-col items-center space-y-2 text-center">
             <Link href="/" className="flex items-center gap-2">
               <ShieldCheck className="h-8 w-8 text-primary" />
-              <span className="text-2xl font-bold">ElectVote</span>
+              <span className="text-2xl font-bold">VoteX</span>
             </Link>
             <h1 className="text-3xl font-bold">Resend Verification Mail</h1>
             <p className="text-muted-foreground">
@@ -78,7 +78,7 @@ export default function ResendVerificationMail({ error }: { error: string }) {
       <footer className="border-t py-4">
         <div className="container flex flex-col items-center justify-center gap-2 text-center md:flex-row md:justify-between">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} ElectVote. All rights reserved.
+            © {new Date().getFullYear()} VoteX. All rights reserved.
           </p>
           <div className="flex gap-4">
             <Link

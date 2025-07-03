@@ -41,7 +41,7 @@ export default function DashboardSidebar({
       <SidebarHeader>
         <div className="flex items-center gap-2 px-4 py-2">
           <ShieldCheck className="h-6 w-6 text-primary" />
-          <span className="text-xl font-bold">ElectVote</span>
+          <span className="text-xl font-bold">VoteX</span>
         </div>
       </SidebarHeader>
       <SidebarContent>
