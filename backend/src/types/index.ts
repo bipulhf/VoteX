@@ -50,6 +50,7 @@ export interface VotingStats {
   candidateVotes: Array<{
     candidateId: string;
     candidateName: string;
+    imageUrl: string | null;
     party?: string;
     voteCount: number;
     percentage: number;

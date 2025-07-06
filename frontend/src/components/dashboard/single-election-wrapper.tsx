@@ -29,6 +29,7 @@ import { ReportFormModal } from "./report-form-modal";
 type ElectionResult = {
   candidateId: string;
   candidateName: string;
+  imageUrl?: string;
   party: string;
   voteCount: number;
   percentage: number;
@@ -269,7 +270,7 @@ export default function SingleElectionWrapper({
                 <div className="flex items-center gap-6">
                   <Avatar className="h-24 w-24">
                     <AvatarImage
-                      src="/placeholder.svg?height=100&width=100"
+                      src={winner.imageUrl || "/placeholder.svg"}
                       alt={winner.candidateName}
                     />
                     <AvatarFallback className="text-2xl">
@@ -339,7 +340,7 @@ export default function SingleElectionWrapper({
                           </span>
                           <Avatar className="h-10 w-10">
                             <AvatarImage
-                              src="/placeholder.svg?height=40&width=40"
+                              src={result.imageUrl}
                               alt={result.candidateName}
                             />
                             <AvatarFallback>

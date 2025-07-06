@@ -24,7 +24,7 @@ type Candidate = {
   id: string;
   name: string;
   party: string;
-  image?: string;
+  imageUrl?: string;
   description?: string;
 };
 
@@ -41,86 +41,63 @@ type Election = {
 type VotingModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  election: Election | null;
+  election: Election;
 };
 
 export function VotingModal({ isOpen, onClose, election }: VotingModalProps) {
   const [selectedCandidateId, setSelectedCandidateId] = useState<string>("");
-  const [isConfirming, setIsConfirming] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  if (!election) return null;
+  const [hasVoted, setHasVoted] = useState(false);
 
   const selectedCandidate = election.candidates.find(
     (c) => c.id === selectedCandidateId
   );
 
-  const handleVoteClick = () => {
-    if (selectedCandidateId) {
-      setIsConfirming(true);
-    }
-  };
-
-  const handleConfirmVote = async () => {
-    if (selectedCandidateId) {
-      setIsSubmitting(true);
-      try {
-        toast.loading("Submitting vote...");
-        const resp = await voteForElection(election.id, selectedCandidateId);
-        if (resp.error) {
-          toast.dismiss();
-          toast.error(resp.error);
-          return;
-        }
-        toast.dismiss();
-        toast.success("Vote submitted successfully");
-        onClose();
-        window.location.reload();
-        setSelectedCandidateId("");
-        setIsConfirming(false);
-      } catch (error) {
-        toast.error("Error submitting vote");
-      } finally {
-        setIsSubmitting(false);
-      }
-    }
-  };
-
-  const handleCancel = () => {
-    setIsConfirming(false);
-    setSelectedCandidateId("");
-  };
-
   const handleClose = () => {
-    if (!isSubmitting) {
-      setSelectedCandidateId("");
-      setIsConfirming(false);
-      onClose();
+    setSelectedCandidateId("");
+    setIsSubmitting(false);
+    setHasVoted(false);
+    onClose();
+  };
+
+  const handleVoteClick = () => {
+    if (!selectedCandidateId) return;
+    setIsSubmitting(true);
+  };
+
+  const handleVoteConfirm = async () => {
+    if (!selectedCandidateId) return;
+
+    try {
+      const result = await voteForElection(election.id, selectedCandidateId);
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        setHasVoted(true);
+        toast.success("Vote cast successfully!");
+      }
+    } catch (error) {
+      toast.error("Failed to cast vote");
+    } finally {
+      setIsSubmitting(false);
     }
+  };
+
+  const handleVoteCancel = () => {
+    setIsSubmitting(false);
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Vote className="h-5 w-5 text-primary" />
-            Cast Your Vote
-          </DialogTitle>
+          <DialogTitle>Cast Your Vote</DialogTitle>
           <DialogDescription>
-            <div className="space-y-1">
-              <div className="font-medium text-foreground">
-                {election.title}
-              </div>
-              <div className="text-sm">{election.description}</div>
-              <Badge variant="outline" className="mt-2">
-                {election.electionType.name}
-              </Badge>
-            </div>
+            {election.title} • {election.electionType.name}
           </DialogDescription>
         </DialogHeader>
 
-        {!isConfirming ? (
+        {!isSubmitting && !hasVoted ? (
           <>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -153,7 +130,7 @@ export function VotingModal({ isOpen, onClose, election }: VotingModalProps) {
                         />
                         <Avatar className="h-16 w-16">
                           <AvatarImage
-                            src={candidate.image || "/placeholder.svg"}
+                            src={candidate.imageUrl || "/placeholder.svg"}
                             alt={candidate.name}
                           />
                           <AvatarFallback className="text-lg">
@@ -164,26 +141,19 @@ export function VotingModal({ isOpen, onClose, election }: VotingModalProps) {
                               .toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
-                        <div className="flex-1 min-w-0">
-                          <div className="font-medium text-base">
+                        <div className="flex-1">
+                          <div className="font-semibold text-lg">
                             {candidate.name}
                           </div>
                           <Badge variant="outline" className="mt-1">
                             {candidate.party}
                           </Badge>
                           {candidate.description && (
-                            <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
+                            <p className="text-sm text-muted-foreground mt-2">
                               {candidate.description}
                             </p>
                           )}
                         </div>
-                        {selectedCandidateId === candidate.id && (
-                          <div className="absolute top-2 right-2">
-                            <div className="bg-primary text-primary-foreground rounded-full p-1">
-                              <Check className="h-4 w-4" />
-                            </div>
-                          </div>
-                        )}
                       </Label>
                     </div>
                   ))}
@@ -195,7 +165,7 @@ export function VotingModal({ isOpen, onClose, election }: VotingModalProps) {
                   <div className="flex items-center gap-3">
                     <Avatar className="h-12 w-12">
                       <AvatarImage
-                        src={selectedCandidate.image || "/placeholder.svg"}
+                        src={selectedCandidate.imageUrl || "/placeholder.svg"}
                         alt={selectedCandidate.name}
                       />
                       <AvatarFallback>
@@ -234,115 +204,77 @@ export function VotingModal({ isOpen, onClose, election }: VotingModalProps) {
               </Button>
             </DialogFooter>
           </>
-        ) : (
+        ) : isSubmitting ? (
           <>
-            <div className="space-y-6">
-              <div className="text-center space-y-4">
-                <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-                  <Vote className="h-8 w-8 text-primary" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold">Confirm Your Vote</h3>
-                  <p className="text-muted-foreground mt-1">
-                    Please review your selection before submitting. This action
-                    cannot be undone.
-                  </p>
-                </div>
+            <div className="space-y-6 py-8">
+              <div className="text-center">
+                <h3 className="text-lg font-medium mb-2">Confirm Your Vote</h3>
+                <p className="text-sm text-muted-foreground">
+                  Please review your selection before submitting your vote.
+                </p>
               </div>
 
-              <Separator />
-
-              <div className="space-y-4">
-                <div>
-                  <h4 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">
-                    Election
-                  </h4>
-                  <div className="mt-1">
-                    <div className="font-medium">{election.title}</div>
-                    <Badge variant="outline" className="mt-1">
-                      {election.electionType.name}
-                    </Badge>
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">
-                    Your Choice
-                  </h4>
-                  <div className="mt-2 flex items-center gap-4 p-4 border rounded-lg bg-primary/5">
-                    <Avatar className="h-16 w-16">
-                      <AvatarImage
-                        src={selectedCandidate?.image || "/placeholder.svg"}
-                        alt={selectedCandidate?.name}
-                      />
-                      <AvatarFallback className="text-lg">
-                        {selectedCandidate?.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")
-                          .toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <div className="font-semibold text-lg">
-                        {selectedCandidate?.name}
-                      </div>
-                      <Badge variant="outline">
-                        {selectedCandidate?.party}
-                      </Badge>
-                      {selectedCandidate?.description && (
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {selectedCandidate.description}
-                        </p>
-                      )}
+              <div>
+                <h4 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">
+                  Your Choice
+                </h4>
+                <div className="mt-2 flex items-center gap-4 p-4 border rounded-lg bg-primary/5">
+                  <Avatar className="h-16 w-16">
+                    <AvatarImage
+                      src={selectedCandidate?.imageUrl || "/placeholder.svg"}
+                      alt={selectedCandidate?.name}
+                    />
+                    <AvatarFallback className="text-lg">
+                      {selectedCandidate?.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")
+                        .toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <div className="font-semibold text-lg">
+                      {selectedCandidate?.name}
                     </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                <div className="flex items-start gap-2">
-                  <div className="w-5 h-5 rounded-full bg-amber-500 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="text-white text-xs font-bold">!</span>
-                  </div>
-                  <div className="text-sm">
-                    <div className="font-medium text-amber-800">
-                      Important Notice
-                    </div>
-                    <div className="text-amber-700 mt-1">
-                      Once you submit your vote, it cannot be changed or
-                      withdrawn. Please ensure your selection is correct.
-                    </div>
+                    <Badge variant="outline">{selectedCandidate?.party}</Badge>
+                    {selectedCandidate?.description && (
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {selectedCandidate.description}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
             </div>
 
             <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={handleCancel}
-                disabled={isSubmitting}
-              >
+              <Button variant="outline" onClick={handleVoteCancel}>
                 <X className="mr-2 h-4 w-4" />
-                Go Back
+                Cancel
               </Button>
-              <Button
-                onClick={handleConfirmVote}
-                disabled={isSubmitting}
-                className="bg-green-600 hover:bg-green-700"
-              >
-                {isSubmitting ? (
-                  <>
-                    <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    Submitting...
-                  </>
-                ) : (
-                  <>
-                    <Check className="mr-2 h-4 w-4" />
-                    Submit Vote
-                  </>
-                )}
+              <Button onClick={handleVoteConfirm}>
+                <Check className="mr-2 h-4 w-4" />
+                Confirm Vote
+              </Button>
+            </DialogFooter>
+          </>
+        ) : (
+          <>
+            <div className="space-y-6 py-8 text-center">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                <Check className="w-8 h-8 text-green-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Vote Submitted!</h3>
+                <p className="text-sm text-muted-foreground">
+                  Your vote has been successfully recorded.
+                </p>
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button onClick={handleClose} className="w-full">
+                Close
               </Button>
             </DialogFooter>
           </>

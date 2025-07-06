@@ -135,6 +135,7 @@ export class ElectionService {
             id: true,
             name: true,
             party: true,
+            imageUrl: true,
           },
         },
         commissioners: {
@@ -163,7 +164,7 @@ export class ElectionService {
 
   async getElectionsForUser(userId?: string, userRole?: string) {
     // If no user is provided or user is admin, return all elections
-    if (!userId || userRole === "ADMIN") {
+    if (!userId) {
       return this.getAllElections();
     }
 
@@ -203,6 +204,7 @@ export class ElectionService {
             id: true,
             name: true,
             party: true,
+            imageUrl: true,
           },
         },
         commissioners: {
@@ -515,7 +517,14 @@ export class ElectionService {
     const election = await prisma.election.findUnique({
       where: { id: electionId },
       include: {
-        candidates: true,
+        candidates: {
+          select: {
+            id: true,
+            name: true,
+            party: true,
+            imageUrl: true,
+          },
+        },
         votes: {
           include: {
             candidate: true,
@@ -553,6 +562,7 @@ export class ElectionService {
     const results = election.candidates.map((candidate) => ({
       candidateId: candidate.id,
       candidateName: candidate.name,
+      imageUrl: candidate.imageUrl,
       party: candidate.party || undefined,
       voteCount: voteCounts[candidate.id],
       percentage:
@@ -721,6 +731,7 @@ export class ElectionService {
                 id: true,
                 name: true,
                 party: true,
+                imageUrl: true,
               },
             },
             _count: {

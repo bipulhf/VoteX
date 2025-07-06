@@ -39,6 +39,7 @@ import { approveElection } from "@/actions/election.action";
 import { toast } from "sonner";
 import { ViewVotersModal } from "./view-voters-modal";
 import { ReportsModal } from "./reports-modal";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 type CommissionerElection = {
   id: string;
@@ -69,6 +70,7 @@ type CommissionerElection = {
     id: string;
     name: string;
     party: string;
+    imageUrl?: string;
   }>;
   _count: {
     votes: number;
@@ -531,13 +533,26 @@ export default function ElectionCommissionWrapper({
                 {/* Candidates */}
                 <div>
                   <h4 className="font-medium">Candidates</h4>
-                  <div className="mt-2 space-y-2">
+                  <div className="mt-2 grid grid-cols-1 md:grid-cols-3 gap-2">
                     {selectedElection.candidates.map((candidate) => (
                       <div
                         key={candidate.id}
-                        className="flex items-center justify-between p-2 border rounded"
+                        className="flex items-center justify-between p-2"
                       >
                         <div>
+                          <Avatar className="h-16 w-16">
+                            <AvatarImage
+                              src={candidate.imageUrl || "/placeholder.svg"}
+                              alt={candidate.name}
+                            />
+                            <AvatarFallback className="text-lg">
+                              {candidate.name
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")
+                                .toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
                           <div className="font-medium">{candidate.name}</div>
                           <Badge variant="outline" className="text-xs">
                             {candidate.party}

@@ -11,7 +11,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 
 type Election = {
@@ -43,6 +43,7 @@ type Election = {
     id: string;
     name: string;
     party: string;
+    imageUrl?: string;
   }>;
   commissioners: Array<{
     id: string;
@@ -175,9 +176,22 @@ export function ElectionDetails({
               Candidates ({election.candidates.length})
             </h3>
             {election.candidates.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {election.candidates.map((candidate) => (
-                  <div key={candidate.id} className="p-3 border rounded-lg">
+                  <div key={candidate.id} className="p-3">
+                    <Avatar className="h-16 w-16">
+                      <AvatarImage
+                        src={candidate.imageUrl || "/placeholder.svg"}
+                        alt={candidate.name}
+                      />
+                      <AvatarFallback className="text-lg">
+                        {candidate.name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")
+                          .toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
                     <div className="font-medium">{candidate.name}</div>
                     <Badge variant="outline" className="mt-1">
                       {candidate.party}

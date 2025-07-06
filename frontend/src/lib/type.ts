@@ -38,6 +38,7 @@ export type Election = {
     id: string;
     name: string;
     party: string;
+    imageUrl?: string;
   }>;
   commissioners: Array<{
     id: string;

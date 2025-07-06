@@ -132,36 +132,6 @@ export function ElectionCard({
   ).length;
   const totalCommissioners = election.commissioners.length;
 
-  const getStatusBadgeVariant = (status: string) => {
-    switch (status) {
-      case "DRAFT":
-        return "secondary";
-      case "ACTIVE":
-        return "default";
-      case "COMPLETED":
-        return "outline";
-      case "CANCELLED":
-        return "destructive";
-      default:
-        return "secondary";
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "DRAFT":
-        return "text-gray-600";
-      case "ACTIVE":
-        return "text-white bg-green-600";
-      case "COMPLETED":
-        return "text-blue-600";
-      case "CANCELLED":
-        return "text-red-600";
-      default:
-        return "text-gray-600";
-    }
-  };
-
   const handleVoteClick = () => {
     setIsVotingModalOpen(true);
   };

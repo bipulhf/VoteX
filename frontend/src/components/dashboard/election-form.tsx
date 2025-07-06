@@ -35,6 +35,7 @@ import {
   createElectionWithCandidatesAndCommissioners,
   updateElectionWithCandidates,
 } from "@/actions/election.action";
+import { CandidateImageUpload } from "./candidate-image-upload";
 import { toast } from "sonner";
 
 type ElectionType = {
@@ -56,6 +57,7 @@ type Candidate = {
   id: string;
   name: string;
   party: string;
+  imageUrl?: string;
 };
 
 type Commissioner = {
@@ -158,6 +160,7 @@ export function ElectionForm({
         id: `candidate_${Date.now()}`,
         name: newCandidate.name.trim(),
         party: newCandidate.party.trim(),
+        imageUrl: undefined,
       };
       setCandidates([...candidates, candidate]);
       setNewCandidate({ name: "", party: "" });
@@ -167,6 +170,15 @@ export function ElectionForm({
   // Remove candidate
   const removeCandidate = (candidateId: string) => {
     setCandidates(candidates.filter((c) => c.id !== candidateId));
+  };
+
+  // Update candidate image
+  const updateCandidateImage = (candidateId: string, imageUrl: string) => {
+    setCandidates(
+      candidates.map((candidate) =>
+        candidate.id === candidateId ? { ...candidate, imageUrl } : candidate
+      )
+    );
   };
 
   // Add commissioner
@@ -217,6 +229,7 @@ export function ElectionForm({
           id: candidate.id,
           name: candidate.name,
           party: candidate.party,
+          imageUrl: candidate.imageUrl,
         }));
 
         const result = await updateElectionWithCandidates(
@@ -264,6 +277,7 @@ export function ElectionForm({
       const candidatesData = candidates.map((candidate) => ({
         name: candidate.name,
         party: candidate.party,
+        imageUrl: candidate.imageUrl,
       }));
 
       const commissionersData = commissioners.map((commissioner) => ({
@@ -450,22 +464,32 @@ export function ElectionForm({
             {candidates.length > 0 && (
               <div className="space-y-2">
                 <Label>Added Candidates</Label>
-                <div className="space-y-2">
+                <div className="space-y-4">
                   {candidates.map((candidate) => (
                     <div
                       key={candidate.id}
-                      className="flex items-center justify-between p-2 border rounded"
+                      className="flex items-center gap-4 p-4 border rounded-lg"
                     >
-                      <div>
-                        <span className="font-medium">{candidate.name}</span>
-                        <Badge variant="outline" className="ml-2">
-                          {candidate.party}
-                        </Badge>
+                      <CandidateImageUpload
+                        candidateId={candidate.id}
+                        candidateName={candidate.name}
+                        imageUrl={candidate.imageUrl}
+                        onImageUploaded={(imageUrl) =>
+                          updateCandidateImage(candidate.id, imageUrl)
+                        }
+                        disabled={isLoading}
+                      />
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">{candidate.name}</span>
+                          <Badge variant="outline">{candidate.party}</Badge>
+                        </div>
                       </div>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => removeCandidate(candidate.id)}
+                        disabled={isLoading}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
