@@ -220,7 +220,7 @@ export default function ChatRoomComponent({
 
   if (loading) {
     return (
-      <Card className="h-[620px]">
+      <Card className="h-[640px]">
         <CardContent className="flex items-center justify-center h-full">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
@@ -232,7 +232,7 @@ export default function ChatRoomComponent({
   }
 
   return (
-    <Card className="h-[620px] flex flex-col">
+    <Card className="h-[640px] flex flex-col">
       {/* Chat Header */}
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center justify-between">
@@ -250,7 +250,7 @@ export default function ChatRoomComponent({
 
       {/* Messages */}
       <CardContent className="flex-1 p-4 pt-0">
-        <ScrollArea className="h-[420px] pr-4">
+        <ScrollArea className="h-[460px] pr-4">
           <div className="space-y-4">
             {messages.map((message) => (
               <div
@@ -261,7 +261,7 @@ export default function ChatRoomComponent({
                     : "justify-start"
                 }`}
               >
-                <div className="flex items-start space-x-2 max-w-[80%]">
+                <div className="flex items-start space-x-2 min-w-0 max-w-[80%]">
                   {message.user.id !== currentUserId && (
                     <Avatar className="h-8 w-8">
                       <AvatarFallback className="text-xs">
