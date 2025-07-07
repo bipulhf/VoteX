@@ -8,6 +8,8 @@ import { Server } from "socket.io";
 
 import env from "./config/env";
 import { errorHandler, notFound } from "./middleware/errorHandler";
+import { socketAuthMiddleware } from "./middleware/socketAuth";
+import { ChatSocketHandler } from "./utils/socketHandlers";
 
 // Import routes
 import authRoutes from "./routes/auth";
@@ -16,6 +18,7 @@ import electionRoutes from "./routes/elections";
 import userRoutes from "./routes/users";
 import eligibleVoterRoutes from "./routes/eligibleVoters";
 import reportRoutes from "./routes/reports";
+import chatRoutes from "./routes/chat";
 
 const app = express();
 const server = createServer(app);
@@ -25,6 +28,17 @@ const io = new Server(server, {
     origin: env.FRONTEND_URL,
     methods: ["GET", "POST"],
   },
+});
+
+// Initialize chat handler
+const chatHandler = new ChatSocketHandler();
+
+// Socket.IO authentication middleware
+io.use(socketAuthMiddleware);
+
+// Socket.IO connection handler
+io.on("connection", (socket) => {
+  chatHandler.handleConnection(io, socket as any);
 });
 
 app.set("trust proxy", 1);
@@ -68,27 +82,7 @@ app.use("/api/elections", electionRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/eligible-voters", eligibleVoterRoutes);
 app.use("/api/reports", reportRoutes);
-
-// Socket.IO connection handling
-io.on("connection", (socket) => {
-  console.log("User connected:", socket.id);
-
-  socket.on("join-election", (electionId: string) => {
-    socket.join(`election-${electionId}`);
-    console.log(
-      `User ${socket.id} joined election room: election-${electionId}`
-    );
-  });
-
-  socket.on("leave-election", (electionId: string) => {
-    socket.leave(`election-${electionId}`);
-    console.log(`User ${socket.id} left election room: election-${electionId}`);
-  });
-
-  socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
-  });
-});
+app.use("/api/chat", chatRoutes);
 
 app.set("io", io);
 
@@ -101,6 +95,7 @@ server.listen(PORT, () => {
   console.log(`🚀 Voting System API running on port ${PORT}`);
   console.log(`📊 Environment: ${env.NODE_ENV}`);
   console.log(`🌐 Frontend URL: ${env.FRONTEND_URL}`);
+  console.log(`💬 Chat system enabled with Socket.IO`);
 });
 
 process.on("SIGTERM", () => {

@@ -1,0 +1,202 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table users {
+  id String [pk]
+  email String [unique, not null]
+  password String [not null]
+  firstName String [not null]
+  lastName String [not null]
+  role UserRole [not null, default: 'USER']
+  isEmailVerified Boolean [not null, default: false]
+  emailVerificationToken String
+  passwordResetToken String
+  passwordResetExpires DateTime
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  votes votes [not null]
+  commissionerElections election_commissioners [not null]
+  createdElections elections [not null]
+  eligibleElections eligible_voters [not null]
+  reports reports [not null]
+  chatMessages chat_messages [not null]
+}
+
+Table election_types {
+  id String [pk]
+  name String [unique, not null]
+  description String
+  isActive Boolean [not null, default: true]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  elections elections [not null]
+}
+
+Table elections {
+  id String [pk]
+  title String [not null]
+  description String
+  status ElectionStatus [not null, default: 'ACTIVE']
+  startDate DateTime [not null]
+  endDate DateTime [not null]
+  isResultPublic Boolean [not null, default: false]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  electionTypeId String [not null]
+  createdById String [not null]
+  electionType election_types [not null]
+  createdBy users [not null]
+  candidates candidates [not null]
+  votes votes [not null]
+  commissioners election_commissioners [not null]
+  eligibleVoters eligible_voters [not null]
+  reports reports [not null]
+  chatRoom chat_rooms
+}
+
+Table candidates {
+  id String [pk]
+  name String [not null]
+  party String
+  description String
+  imageUrl String
+  position Int [not null, default: 0]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  electionId String [not null]
+  election elections [not null]
+  votes votes [not null]
+}
+
+Table votes {
+  id String [pk]
+  status VoteStatus [not null, default: 'PENDING']
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  userId String [not null]
+  electionId String [not null]
+  candidateId String [not null]
+  user users [not null]
+  election elections [not null]
+  candidate candidates [not null]
+
+  indexes {
+    (userId, electionId) [unique]
+  }
+}
+
+Table election_commissioners {
+  id String [pk]
+  hasApproved Boolean [not null, default: false]
+  approvedAt DateTime
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  userId String [not null]
+  electionId String [not null]
+  user users [not null]
+  election elections [not null]
+
+  indexes {
+    (userId, electionId) [unique]
+  }
+}
+
+Table eligible_voters {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  userId String [not null]
+  electionId String [not null]
+  user users [not null]
+  election elections [not null]
+
+  indexes {
+    (userId, electionId) [unique]
+  }
+}
+
+Table reports {
+  id String [pk]
+  title String [not null]
+  description String [not null]
+  attachmentUrls String[] [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  reporterId String [not null]
+  electionId String [not null]
+  reporter users [not null]
+  election elections [not null]
+}
+
+Table chat_rooms {
+  id String [pk]
+  name String [not null]
+  isActive Boolean [not null, default: true]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  electionId String [unique, not null]
+  election elections [not null]
+  messages chat_messages [not null]
+}
+
+Table chat_messages {
+  id String [pk]
+  content String [not null]
+  isEdited Boolean [not null, default: false]
+  editedAt DateTime
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  userId String [not null]
+  chatRoomId String [not null]
+  user users [not null]
+  chatRoom chat_rooms [not null]
+}
+
+Enum UserRole {
+  ADMIN
+  USER
+}
+
+Enum ElectionStatus {
+  DRAFT
+  PUBLISHED
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+Enum VoteStatus {
+  PENDING
+  CONFIRMED
+}
+
+Ref: elections.electionTypeId > election_types.id [delete: Cascade]
+
+Ref: elections.createdById > users.id
+
+Ref: candidates.electionId > elections.id [delete: Cascade]
+
+Ref: votes.userId > users.id [delete: Cascade]
+
+Ref: votes.electionId > elections.id [delete: Cascade]
+
+Ref: votes.candidateId > candidates.id [delete: Cascade]
+
+Ref: election_commissioners.userId > users.id [delete: Cascade]
+
+Ref: election_commissioners.electionId > elections.id [delete: Cascade]
+
+Ref: eligible_voters.userId > users.id [delete: Cascade]
+
+Ref: eligible_voters.electionId > elections.id [delete: Cascade]
+
+Ref: reports.reporterId > users.id [delete: Cascade]
+
+Ref: reports.electionId > elections.id [delete: Cascade]
+
+Ref: chat_rooms.electionId - elections.id [delete: Cascade]
+
+Ref: chat_messages.userId > users.id [delete: Cascade]
+
+Ref: chat_messages.chatRoomId > chat_rooms.id [delete: Cascade]
