@@ -44,9 +44,16 @@ class SocketService {
 
   disconnect() {
     if (this.socket) {
+      console.log("Socket Debug - Disconnecting from chat server");
+      this.socket.removeAllListeners();
       this.socket.disconnect();
       this.socket = null;
+      this.token = null;
     }
+  }
+
+  isConnected() {
+    return this.socket?.connected || false;
   }
 
   // Join chat room for an election
@@ -116,7 +123,20 @@ class SocketService {
 
   // Remove event listeners
   off(event: string, callback?: any) {
-    this.socket?.off(event, callback);
+    if (this.socket) {
+      if (callback) {
+        this.socket.off(event, callback);
+      } else {
+        this.socket.removeAllListeners(event);
+      }
+    }
+  }
+
+  // Remove all listeners for cleanup
+  removeAllListeners() {
+    if (this.socket) {
+      this.socket.removeAllListeners();
+    }
   }
 }
 

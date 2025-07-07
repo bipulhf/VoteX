@@ -23,12 +23,22 @@ import chatRoutes from "./routes/chat";
 const app = express();
 const server = createServer(app);
 
+// Set max listeners to prevent memory leak warnings in development
+// In development, we need more listeners due to frequent restarts
+const maxListeners = env.NODE_ENV === "development" ? 30 : 15;
+server.setMaxListeners(maxListeners);
+
 const io = new Server(server, {
   cors: {
     origin: env.FRONTEND_URL,
     methods: ["GET", "POST"],
   },
+  pingTimeout: 60000,
+  pingInterval: 25000,
 });
+
+// Set max listeners for Socket.IO as well
+io.setMaxListeners(maxListeners);
 
 // Initialize chat handler
 const chatHandler = new ChatSocketHandler();
@@ -38,7 +48,13 @@ io.use(socketAuthMiddleware);
 
 // Socket.IO connection handler
 io.on("connection", (socket) => {
+  console.log(`Socket connected: ${socket.id}`);
   chatHandler.handleConnection(io, socket as any);
+
+  // Add disconnect handler for cleanup
+  socket.on("disconnect", (reason) => {
+    console.log(`Socket disconnected: ${socket.id}, reason: ${reason}`);
+  });
 });
 
 app.set("trust proxy", 1);
@@ -96,20 +112,52 @@ server.listen(PORT, () => {
   console.log(`📊 Environment: ${env.NODE_ENV}`);
   console.log(`🌐 Frontend URL: ${env.FRONTEND_URL}`);
   console.log(`💬 Chat system enabled with Socket.IO`);
+  console.log(`⚙️ Max event listeners set to: ${maxListeners}`);
 });
 
-process.on("SIGTERM", () => {
-  console.log("SIGTERM received. Shutting down gracefully...");
-  server.close(() => {
-    console.log("Process terminated");
+// Graceful shutdown handling
+const gracefulShutdown = (signal: string) => {
+  console.log(`${signal} received. Shutting down gracefully...`);
+
+  // Close Socket.IO connections first
+  io.close((err) => {
+    if (err) {
+      console.error("Error closing Socket.IO server:", err);
+    } else {
+      console.log("Socket.IO server closed");
+    }
+
+    // Then close HTTP server
+    server.close((err) => {
+      if (err) {
+        console.error("Error closing HTTP server:", err);
+        process.exit(1);
+      } else {
+        console.log("HTTP server closed");
+        process.exit(0);
+      }
+    });
   });
+
+  // Force close after 10 seconds
+  setTimeout(() => {
+    console.error("Forcing server close after timeout");
+    process.exit(1);
+  }, 10000);
+};
+
+process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+process.on("SIGINT", () => gracefulShutdown("SIGINT"));
+
+// Handle uncaught exceptions and unhandled rejections
+process.on("uncaughtException", (err) => {
+  console.error("Uncaught Exception:", err);
+  gracefulShutdown("UNCAUGHT_EXCEPTION");
 });
 
-process.on("SIGINT", () => {
-  console.log("SIGINT received. Shutting down gracefully...");
-  server.close(() => {
-    console.log("Process terminated");
-  });
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled Rejection at:", promise, "reason:", reason);
+  gracefulShutdown("UNHANDLED_REJECTION");
 });
 
 export default app;

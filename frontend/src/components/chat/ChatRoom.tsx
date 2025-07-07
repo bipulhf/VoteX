@@ -45,15 +45,26 @@ export default function ChatRoomComponent({
   useEffect(() => {
     initializeChat();
     return () => {
+      console.log("Chat Debug - Cleaning up chat component");
+
+      // Leave chat room
       if (chatRoom) {
         socketService.leaveChatRoom(electionId);
       }
+
+      // Clean up all event listeners
       socketService.off("chat:message-received");
       socketService.off("chat:message-edited");
       socketService.off("chat:message-deleted");
       socketService.off("chat:typing");
       socketService.off("chat:user-joined");
       socketService.off("chat:user-left");
+      socketService.off("chat:error");
+
+      // Clear typing timeout
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
     };
   }, [electionId]);
 
@@ -232,7 +243,7 @@ export default function ChatRoomComponent({
   }
 
   return (
-    <Card className="h-[640px] flex flex-col">
+    <Card className="h-[660px] flex flex-col">
       {/* Chat Header */}
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center justify-between">

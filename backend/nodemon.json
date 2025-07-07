@@ -1,10 +1,12 @@
 {
   "watch": ["src"],
   "ext": "ts,json",
-  "ignore": ["src/**/*.spec.ts"],
+  "ignore": ["src/**/*.spec.ts", "src/**/*.test.ts"],
   "exec": "ts-node src/index.ts",
   "env": {
     "NODE_ENV": "development"
   },
-  "delay": "1000"
+  "delay": "1500",
+  "signal": "SIGTERM",
+  "killtimeout": 5000
 }
