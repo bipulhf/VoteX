@@ -31,6 +31,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   createElectionWithCandidatesAndCommissioners,
   updateElectionWithCandidates,
@@ -109,6 +110,14 @@ export function ElectionForm({
     endDate: new Date(),
     isResultPublic: false,
     electionTypeId: "",
+    // National Election Specific Fields
+    officeLevel: "",
+    positionType: "",
+    state: "",
+    district: "",
+    isNationalElection: false,
+    termDuration: "",
+    hasIncumbent: false,
   });
 
   const [candidates, setCandidates] = useState<Candidate[]>([]);
@@ -130,6 +139,14 @@ export function ElectionForm({
         endDate: new Date(election.endDate),
         isResultPublic: election.isResultPublic,
         electionTypeId: election.electionTypeId,
+        // National Election Specific Fields
+        officeLevel: "",
+        positionType: "",
+        state: "",
+        district: "",
+        isNationalElection: false,
+        termDuration: "",
+        hasIncumbent: false,
       });
       setCandidates(election.candidates || []);
       setCommissioners(election.commissioners || []);
@@ -145,6 +162,14 @@ export function ElectionForm({
         endDate: new Date(),
         isResultPublic: false,
         electionTypeId: "",
+        // National Election Specific Fields
+        officeLevel: "",
+        positionType: "",
+        state: "",
+        district: "",
+        isNationalElection: false,
+        termDuration: "",
+        hasIncumbent: false,
       });
       setCandidates([]);
       setCommissioners([]);
@@ -210,6 +235,18 @@ export function ElectionForm({
 
   // Handle submit
   const handleSubmit = async () => {
+    // Bangladesh National Election fields (frontend only - not sent to backend per requirements)
+    if (formData.isNationalElection) {
+      console.log("Bangladesh National Election Data:", {
+        officeLevel: formData.officeLevel,
+        positionType: formData.positionType,
+        division: formData.state,
+        district: formData.district,
+        termDuration: formData.termDuration,
+        hasIncumbent: formData.hasIncumbent,
+      });
+    }
+
     if (election) {
       // Handle edit case
       setIsLoading(true);
@@ -399,6 +436,155 @@ export function ElectionForm({
                   <SelectItem value="CANCELLED">Cancelled</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+
+            {/* National Election Specific Fields */}
+            <div className="space-y-4 p-4 border rounded-lg bg-blue-50 dark:bg-blue-950">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="isNationalElection"
+                  checked={formData.isNationalElection}
+                  onCheckedChange={(checked) =>
+                    setFormData({ ...formData, isNationalElection: !!checked })
+                  }
+                />
+                <Label htmlFor="isNationalElection" className="font-medium">
+                  🇧🇩 Bangladesh National Election
+                </Label>
+              </div>
+
+              {formData.isNationalElection && (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="officeLevel">Office Level</Label>
+                      <Select
+                        value={formData.officeLevel}
+                        onValueChange={(value) =>
+                          setFormData({ ...formData, officeLevel: value })
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select office level" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="national">National</SelectItem>
+                          <SelectItem value="divisional">Divisional</SelectItem>
+                          <SelectItem value="district">District</SelectItem>
+                          <SelectItem value="upazila">Upazila</SelectItem>
+                          <SelectItem value="union">Union</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="positionType">Position Type</Label>
+                      <Select
+                        value={formData.positionType}
+                        onValueChange={(value) =>
+                          setFormData({ ...formData, positionType: value })
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select position" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="prime-minister">
+                            Prime Minister
+                          </SelectItem>
+                          <SelectItem value="member-parliament">
+                            Member of Parliament (MP)
+                          </SelectItem>
+                          <SelectItem value="speaker">
+                            Speaker of Parliament
+                          </SelectItem>
+                          <SelectItem value="deputy-speaker">
+                            Deputy Speaker
+                          </SelectItem>
+                          <SelectItem value="minister">Minister</SelectItem>
+                          <SelectItem value="state-minister">
+                            State Minister
+                          </SelectItem>
+                          <SelectItem value="mayor-dhaka">
+                            Mayor (Dhaka City Corporation)
+                          </SelectItem>
+                          <SelectItem value="mayor-chittagong">
+                            Mayor (Chittagong City Corporation)
+                          </SelectItem>
+                          <SelectItem value="mayor-city">
+                            City Corporation Mayor
+                          </SelectItem>
+                          <SelectItem value="mayor-municipality">
+                            Municipality Mayor
+                          </SelectItem>
+                          <SelectItem value="district-commissioner">
+                            District Commissioner
+                          </SelectItem>
+                          <SelectItem value="upazila-chairman">
+                            Upazila Chairman
+                          </SelectItem>
+                          <SelectItem value="union-chairman">
+                            Union Parishad Chairman
+                          </SelectItem>
+                          <SelectItem value="councillor">Councillor</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="state">Division</Label>
+                      <Select
+                        value={formData.state}
+                        onValueChange={(value) =>
+                          setFormData({ ...formData, state: value })
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select division" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="dhaka">Dhaka Division</SelectItem>
+                          <SelectItem value="chittagong">
+                            Chittagong Division
+                          </SelectItem>
+                          <SelectItem value="rajshahi">
+                            Rajshahi Division
+                          </SelectItem>
+                          <SelectItem value="khulna">
+                            Khulna Division
+                          </SelectItem>
+                          <SelectItem value="barisal">
+                            Barisal Division
+                          </SelectItem>
+                          <SelectItem value="sylhet">
+                            Sylhet Division
+                          </SelectItem>
+                          <SelectItem value="rangpur">
+                            Rangpur Division
+                          </SelectItem>
+                          <SelectItem value="mymensingh">
+                            Mymensingh Division
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="district">District/Constituency</Label>
+                      <Input
+                        id="district"
+                        value={formData.district}
+                        onChange={(e) =>
+                          setFormData({ ...formData, district: e.target.value })
+                        }
+                        placeholder="e.g., Dhaka-1, Chittagong-5"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="space-y-2">
