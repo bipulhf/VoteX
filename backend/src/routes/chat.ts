@@ -50,7 +50,7 @@ router.get(
   authenticate,
   asyncHandler(async (req: any, res) => {
     const chatRooms = await chatService.getUserChatRooms(
-      req.user.id,
+      req.user.userId,
       req.user.role
     );
 
@@ -71,7 +71,7 @@ router.get(
 
     const chatRoom = await chatService.getChatRoomByElectionId(
       electionId,
-      req.user.id,
+      req.user.userId,
       req.user.role
     );
 
@@ -94,7 +94,7 @@ router.get(
 
     const result = await chatService.getChatHistory(
       chatRoomId,
-      req.user.id,
+      req.user.userId,
       req.user.role,
       page,
       limit
@@ -119,7 +119,7 @@ router.post(
 
     const message = await chatService.sendMessage(
       chatRoomId,
-      req.user.id,
+      req.user.userId,
       content,
       req.user.role
     );
@@ -144,7 +144,7 @@ router.put(
 
     const message = await chatService.editMessage(
       messageId,
-      req.user.id,
+      req.user.userId,
       content,
       req.user.role
     );
@@ -165,7 +165,7 @@ router.delete(
   asyncHandler(async (req: any, res) => {
     const { messageId } = req.params;
 
-    await chatService.deleteMessage(messageId, req.user.id, req.user.role);
+    await chatService.deleteMessage(messageId, req.user.userId, req.user.role);
 
     res.json({
       success: true,

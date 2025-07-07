@@ -12,6 +12,7 @@ import {
   AlertCircle,
   CheckCircle,
   FileText,
+  MessageCircle,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -40,6 +41,8 @@ import { toast } from "sonner";
 import { ViewVotersModal } from "./view-voters-modal";
 import { ReportsModal } from "./reports-modal";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import ChatRoomComponent from "@/components/chat/ChatRoom";
+import { useAuth } from "@/hooks/use-auth";
 
 type CommissionerElection = {
   id: string;
@@ -88,6 +91,7 @@ export default function ElectionCommissionWrapper({
 }: {
   myElectionsDuty: CommissionerElection[];
 }) {
+  const { user } = useAuth();
   const [elections, setElections] =
     useState<CommissionerElection[]>(myElectionsDuty);
   const [selectedElection, setSelectedElection] =
@@ -96,6 +100,10 @@ export default function ElectionCommissionWrapper({
   const [isApproving, setIsApproving] = useState(false);
   const [isVotersModalOpen, setIsVotersModalOpen] = useState(false);
   const [isReportsModalOpen, setIsReportsModalOpen] = useState(false);
+  const [isChatModalOpen, setIsChatModalOpen] = useState(false);
+  const [chatElection, setChatElection] = useState<CommissionerElection | null>(
+    null
+  );
 
   const now = new Date();
 
@@ -188,6 +196,12 @@ export default function ElectionCommissionWrapper({
   const openApprovalModal = (election: CommissionerElection) => {
     setSelectedElection(election);
     setIsApprovalModalOpen(true);
+  };
+
+  // Open chat modal
+  const openChatModal = (election: CommissionerElection) => {
+    setChatElection(election);
+    setIsChatModalOpen(true);
   };
 
   // Calculate summary statistics
@@ -326,7 +340,7 @@ export default function ElectionCommissionWrapper({
               <TableBody>
                 {elections.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8} className="h-24 text-center">
+                    <TableCell colSpan={9} className="h-24 text-center">
                       No elections assigned to you.
                     </TableCell>
                   </TableRow>
@@ -420,7 +434,18 @@ export default function ElectionCommissionWrapper({
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center gap-2 justify-end">
-                          {!canApproveElection(election) && (
+                          {/* Chat Button */}
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => openChatModal(election)}
+                            className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                          >
+                            <MessageCircle className="mr-1 h-3 w-3" />
+                            Chat
+                          </Button>
+
+                          {!canApproveElection(election) && !chatElection && (
                             <p className="text-sm text-muted-foreground">
                               {format(
                                 new Date(
@@ -462,6 +487,31 @@ export default function ElectionCommissionWrapper({
         isOpen={isReportsModalOpen}
         onClose={() => setIsReportsModalOpen(false)}
       />
+
+      {/* Chat Modal */}
+      <Dialog open={isChatModalOpen} onOpenChange={setIsChatModalOpen}>
+        <DialogContent className="max-w-4xl h-[80vh]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <MessageCircle className="h-5 w-5 text-blue-600" />
+              Election Chat: {chatElection?.title}
+            </DialogTitle>
+            <DialogDescription>
+              Communicate with other commissioners about this election
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex-1 overflow-hidden">
+            {chatElection && user && (
+              <ChatRoomComponent
+                electionId={chatElection.id}
+                currentUserId={user.id}
+                currentUserRole={user.role}
+              />
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Approval Modal */}
       <Dialog open={isApprovalModalOpen} onOpenChange={setIsApprovalModalOpen}>
