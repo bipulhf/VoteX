@@ -1,0 +1,68 @@
+.
+├── dist
+│   ├── prisma
+│   │   ├── seed.d.ts
+│   │   ├── seed.d.ts.map
+│   │   ├── seed.js
+│   │   └── seed.js.map
+│   └── src
+│       ├── config
+│       ├── index.d.ts
+│       ├── index.d.ts.map
+│       ├── index.js
+│       ├── index.js.map
+│       ├── middleware
+│       ├── routes
+│       ├── services
+│       ├── types
+│       └── utils
+├── nodemon.json
+├── package.json
+├── package-lock.json
+├── prisma
+│   ├── dbml
+│   │   └── schema.dbml
+│   ├── schema.prisma
+│   ├── seed.d.ts
+│   └── seed.ts
+├── README.md
+├── scripts
+│   └── setup.sh
+├── src
+│   ├── config
+│   │   ├── database.ts
+│   │   └── env.ts
+│   ├── index.ts
+│   ├── middleware
+│   │   ├── auth.ts
+│   │   ├── errorHandler.ts
+│   │   ├── socketAuth.ts
+│   │   └── validation.ts
+│   ├── routes
+│   │   ├── auth.ts
+│   │   ├── chat.ts
+│   │   ├── elections.ts
+│   │   ├── electionTypes.ts
+│   │   ├── eligibleVoters.ts
+│   │   ├── reports.ts
+│   │   └── users.ts
+│   ├── services
+│   │   ├── authService.ts
+│   │   ├── chatService.ts
+│   │   ├── electionService.ts
+│   │   ├── electionTypeService.ts
+│   │   ├── eligibleVoterService.ts
+│   │   ├── reportService.ts
+│   │   └── userService.ts
+│   ├── types
+│   │   └── index.ts
+│   └── utils
+│       ├── email.ts
+│       ├── jwt.ts
+│       ├── password.ts
+│       ├── socketHandlers.ts
+│       └── validators.ts
+├── structure.txt
+└── tsconfig.json
+
+20 directories, 46 files
