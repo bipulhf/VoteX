@@ -120,8 +120,8 @@ A comprehensive, secure, and real-time digital voting platform built with modern
 
 ### Prerequisites
 
-- Node.js (v18 or higher)
-- PostgreSQL (v13 or higher)
+- Node.js (v20 or higher)
+- PostgreSQL (v16 or higher)
 - npm or yarn package manager
 
 ### Installation
@@ -288,29 +288,11 @@ npm run test:e2e
    npm run start
    ```
 
-### Docker Deployment
-
-```bash
-# Build and run with Docker Compose
-docker-compose up --build
-```
-
-### Environment Setup
-
-- Configure production database
-- Set up email service (SMTP)
-- Configure file upload service
-- Set secure JWT secrets
-- Enable HTTPS/SSL
-
 ## 🛡️ Security Features
 
-- **Data Encryption**: All sensitive data encrypted at rest and in transit
 - **SQL Injection Prevention**: Parameterized queries and ORM protection
-- **CSRF Protection**: Cross-site request forgery prevention
 - **Rate Limiting**: API rate limiting to prevent abuse
 - **Input Validation**: Comprehensive input sanitization and validation
-- **Audit Logging**: Complete audit trail of all system activities
 
 ## 📈 Performance
 
@@ -319,60 +301,5 @@ docker-compose up --build
 - **CDN Integration**: Static asset delivery optimization
 - **Real-time Updates**: Efficient WebSocket connections
 - **Lazy Loading**: Frontend component optimization
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-### Development Guidelines
-
-- Follow TypeScript best practices
-- Write comprehensive tests
-- Use conventional commit messages
-- Update documentation for new features
-- Ensure code coverage above 80%
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 👥 Team
-
-- **Backend Development**: Node.js/Express/PostgreSQL implementation
-- **Frontend Development**: Next.js/React/TypeScript implementation
-- **UI/UX Design**: Modern, responsive interface design
-- **Database Design**: Efficient schema and relationship modeling
-
-## 📞 Support
-
-For support and questions:
-
-- 📧 Email: support@voting-system.com
-- 📱 Phone: +1 (555) 123-4567
-- 💬 Chat: Available in the application
-- 📖 Documentation: [docs.voting-system.com](https://docs.voting-system.com)
-
-## 🔮 Future Enhancements
-
-- **Mobile Application**: Native iOS/Android apps
-- **Blockchain Integration**: Immutable vote recording
-- **AI Analytics**: Advanced voting pattern analysis
-- **Multi-language Support**: Internationalization
-- **Advanced Reporting**: Business intelligence dashboards
-- **API Gateway**: Microservices architecture migration
-
----
-
-## 📊 Quick Stats
-
-- **Lines of Code**: 50,000+
-- **Test Coverage**: 85%+
-- **Performance**: Sub-second response times
-- **Security**: Bank-level encryption
-- **Scalability**: Supports 10,000+ concurrent users
-
+  
 Built with ❤️ using modern web technologies for secure, transparent, and efficient digital voting.
